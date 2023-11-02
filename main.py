@@ -21,7 +21,33 @@ FINI = 2 # la partie est finie car l'un des joueurs a gagné ou la grille est pl
 
 def verification(grille):
 	pass
+    # Vérification en colonne 
+    for k in range(6):
+        for i in range(3):
+            if grille [i] [k] == numero_dujoueur \
+                and grille [i+1] [k] == numero_dujoueur \
+                    and grille [i+2] [k] == numero_dujoueur \
+                        and grille [i+3] [k] == numero_dujoueur :
+                        return True
+    
+    # Vérification en ligne
+    for i in range(6):
+        for k in range(3):
+            if grille [k] [I] == numero_dujoueur \
+                and grille [k+1] [i] == numero_dujoueur \
+                    and grille [k+2] [i] == numero_dujoueur \
+                        and grille [k+3] [i] == numero_dujoueur :
+                        return True
 
+# Vérification en diagonale
+    for i in range(3):
+        for k in range(3):
+            if grille [k] [I] == numero_dujoueur \
+                and grille [k+1] [i+1] == numero_dujoueur \
+                    and grille [k+2] [i+2] == numero_dujoueur \
+                        and grille [k+3] [i+3] == numero_dujoueur :
+                        return True
+				
 def tour_jeu(grille, joueur_actuel):
     # Choix de la colonne par le joueur
     colonne = -1
