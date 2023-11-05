@@ -1,86 +1,95 @@
-# from time import *
-# kp = keypushed
-# KE = KEY_EXE
-# KO = KEY_OK
-
-VD=0 #case vide
-J1=1 #case remplie par joueur 1
-J2=2 #case remplie par joueur 2
+VD = 0
+J1 = 1
+J2 = 2
 grille = [
-	[VD, VD, VD, VD, VD, VD],  #Ligne d'indice 0 affichée en haut de l'écran
-	[VD, VD, VD, VD, VD, VD],
-	[VD, VD, VD, VD, VD, VD],
-	[VD, VD, VD, VD, VD, VD],
-	[VD, VD, VD, VD, VD, VD],
-	[VD, VD, VD, VD, VD, VD],  # Ligne d'indice 6 affichée en bas de l'écran
+    [VD, VD, VD, VD, VD, VD],  
+    [VD, VD, VD, VD, VD, VD],
+    [VD, VD, VD, VD, VD, VD],
+    [VD, VD, VD, VD, VD, VD],
+    [VD, VD, VD, VD, VD, VD],
+    [VD, VD, VD, VD, VD, VD],  
 ]
 
-INACTIF = 1 # jeu n'a pas débuté.
-EN_COURS = 1 # les joueurs sont en train de jouer
-FINI = 2 # la partie est finie car l'un des joueurs a gagné ou la grille est pleine
+INACTIF = 0
+EN_COURS = 1
+FINI = 2
 
-def verification(grille):
-	pass
-    # Vérification en colonne 
-    for k in range(6):
+def verification(grille, joueur_actuel):
+    # verification dans rangés
+    for row in grille:
+        for i in range(4):
+            if all(cell == joueur_actuel for cell in row[i:i + 4]):
+                return True
+
+    # verification dans colonnes
+    for col in range(6):
         for i in range(3):
-            if grille [i] [k] == numero_dujoueur \
-                and grille [i+1] [k] == numero_dujoueur \
-                    and grille [i+2] [k] == numero_dujoueur \
-                        and grille [i+3] [k] == numero_dujoueur :
-                        return True
-    
-    # Vérification en ligne
-    for i in range(6):
-        for k in range(3):
-            if grille [k] [I] == numero_dujoueur \
-                and grille [k+1] [i] == numero_dujoueur \
-                    and grille [k+2] [i] == numero_dujoueur \
-                        and grille [k+3] [i] == numero_dujoueur :
-                        return True
+            if all(grille[i + j][col] == joueur_actuel for j in range(4)):
+                return True
 
-# Vérification en diagonale
+    # verification de victoire diagonale (gauche-droite)
     for i in range(3):
-        for k in range(3):
-            if grille [k] [I] == numero_dujoueur \
-                and grille [k+1] [i+1] == numero_dujoueur \
-                    and grille [k+2] [i+2] == numero_dujoueur \
-                        and grille [k+3] [i+3] == numero_dujoueur :
-                        return True
-				
+        for j in range(4):
+            if all(grille[i + k][j + k] == joueur_actuel for k in range(4)):
+                return True
+
+    # Verification de victoire diagonale (droite-gauche)
+    for i in range(3):
+        for j in range(3, 6):
+            if all(grille[i + k][j - k] == joueur_actuel for k in range(4)):
+                return True
+
+    return False
+
+def afficher_grille(grille):
+    for row in grille:
+        print(row)
+    print()
+
 def tour_jeu(grille, joueur_actuel):
-    # Choix de la colonne par le joueur
     colonne = -1
-    while colonne not in [0,1,2,3,4,5] or grille[0][colonne] != 0:
+    while colonne not in [0, 1, 2, 3, 4, 5] or grille[0][colonne] != VD:
         saisie = -1
-        while saisie not in ["0","1","2","3","4","5"]:
+        while saisie not in ["0", "1", "2", "3", "4", "5"]:
             saisie = input("Colonne ? ")
         colonne = int(saisie)
-        if grille[0][colonne] != 0:
+        if grille[0][colonne] != VD:
             print("Colonne pleine")
-    print(colonne)
-    print('joueur' ,joueur_actuel,',', 'ton tour est fini')
-    
-    # Changement de la valeur dans la grille
+
     ligne = 5
-    while grille[ligne][colonne] != 0:
+    while grille[ligne][colonne] != VD:
         ligne -= 1
     grille[ligne][colonne] = joueur_actuel
     return grille
 
 def jeu():
-    VD=0 #case vide
     grille = [
-        [VD, VD, VD, VD, VD, VD],  #Ligne d'indice 0 affichée en haut de l'écran
+        [VD, VD, VD, VD, VD, VD],  
         [VD, VD, VD, VD, VD, VD],
         [VD, VD, VD, VD, VD, VD],
         [VD, VD, VD, VD, VD, VD],
         [VD, VD, VD, VD, VD, VD],
-        [VD, VD, VD, VD, VD, VD],  # Ligne d'indice 6 affichée en bas de l'écran
+        [VD, VD, VD, VD, VD, VD],  
     ]
-    joueur_actuel = 1
-    while True:
+    joueur_actuel = J1
+    game_state = EN_COURS
+
+    while game_state == EN_COURS:
+        afficher_grille(grille)
         grille = tour_jeu(grille, joueur_actuel)
-        # Changement de joueur
-        joueur_actuel = 3- joueur_actuel
-        print(grille)
+
+        if verification(grille, joueur_actuel):
+            afficher_grille(grille)
+            print(f'Joueur {joueur_actuel} a gagné!')
+            game_state = FINI
+        elif all(cell != VD for row in grille for cell in row):
+            afficher_grille(grille)
+            print("Match nul !")
+            game_state = FINI
+        else:
+            joueur_actuel = J1 if joueur_actuel == J2 else J2
+
+    print("Partie terminée.")
+
+# pr commencer le jeu
+jeu()
