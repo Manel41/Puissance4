@@ -2,38 +2,50 @@ VD = 0
 J1 = 1
 J2 = 2
 grille = [
-    [VD, VD, VD, VD, VD, VD],  
     [VD, VD, VD, VD, VD, VD],
     [VD, VD, VD, VD, VD, VD],
     [VD, VD, VD, VD, VD, VD],
     [VD, VD, VD, VD, VD, VD],
-    [VD, VD, VD, VD, VD, VD],  
+    [VD, VD, VD, VD, VD, VD],
+    [VD, VD, VD, VD, VD, VD],
 ]
 
 INACTIF = 0
 EN_COURS = 1
 FINI = 2
 
-def verification(grille, joueur_actuel):
-    # verification dans rangés
+def display_grille(grille):
     for row in grille:
-        for i in range(4):
-            if all(cell == joueur_actuel for cell in row[i:i + 4]):
+        print("|", end="")
+        for cell in row:
+            if cell == VD:
+                print("   |", end="")
+            elif cell == J1:
+                print(" X |", end="")
+            elif cell == J2:
+                print(" O |", end="")
+        print("\n" + "|---|" * 5)
+
+def verification(grille, joueur_actuel):
+    # Check for a win in rows
+    for row in grille:
+        for i in range(3):
+            if all(cell == joueur_actuel for cell in row[i:i + 3]):
                 return True
 
-    # verification dans colonnes
+    # Check for a win in columns
     for col in range(6):
         for i in range(3):
             if all(grille[i + j][col] == joueur_actuel for j in range(4)):
                 return True
 
-    # verification de victoire diagonale (gauche-droite)
+    # Check for a win in diagonals (top-left to bottom-right)
     for i in range(3):
         for j in range(4):
             if all(grille[i + k][j + k] == joueur_actuel for k in range(4)):
                 return True
 
-    # Verification de victoire diagonale (droite-gauche)
+    # Check for a win in diagonals (top-right to bottom-left)
     for i in range(3):
         for j in range(3, 6):
             if all(grille[i + k][j - k] == joueur_actuel for k in range(4)):
@@ -41,10 +53,6 @@ def verification(grille, joueur_actuel):
 
     return False
 
-def afficher_grille(grille):
-    for row in grille:
-        print(row)
-    print()
 
 def tour_jeu(grille, joueur_actuel):
     colonne = -1
@@ -63,27 +71,25 @@ def tour_jeu(grille, joueur_actuel):
     return grille
 
 def jeu():
-    grille = [
-        [VD, VD, VD, VD, VD, VD],  
-        [VD, VD, VD, VD, VD, VD],
-        [VD, VD, VD, VD, VD, VD],
-        [VD, VD, VD, VD, VD, VD],
-        [VD, VD, VD, VD, VD, VD],
-        [VD, VD, VD, VD, VD, VD],  
-    ]
     joueur_actuel = J1
     game_state = EN_COURS
+    grille = [
+        [VD, VD, VD, VD, VD, VD],
+        [VD, VD, VD, VD, VD, VD],
+        [VD, VD, VD, VD, VD, VD],
+        [VD, VD, VD, VD, VD, VD],
+        [VD, VD, VD, VD, VD, VD],
+        [VD, VD, VD, VD, VD, VD],
+    ]
 
     while game_state == EN_COURS:
-        afficher_grille(grille)
+        display_grille(grille)
         grille = tour_jeu(grille, joueur_actuel)
 
         if verification(grille, joueur_actuel):
-            afficher_grille(grille)
             print(f'Joueur {joueur_actuel} a gagné!')
             game_state = FINI
         elif all(cell != VD for row in grille for cell in row):
-            afficher_grille(grille)
             print("Match nul !")
             game_state = FINI
         else:
@@ -91,5 +97,5 @@ def jeu():
 
     print("Partie terminée.")
 
-# pr commencer le jeu
+# Run the game
 jeu()
